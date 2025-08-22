@@ -7,38 +7,74 @@
 #define BUFFER_SIZE 2
 #endif
 
+void *find_and_replace(char *s, char *filter)
+{
+	int i = 0;
+	int j = 0;
+	char *new;
+	new = malloc(strlen(s));
+
+	while(filter[j] != '\0')
+	{
+		while(s[i] != '\0')
+		{
+
+		}
+	}
+
+}
 int main(int argc, char *argv[])
 {
 	int bytes_read;
 	int i = 0;
 	int j = 0;
-	int buffer_len;
 	char *buffer = calloc(BUFFER_SIZE, sizeof(char));
-	//char *filter = argv[1];
+	char *filter = argv[1];
 	char *line;
 	line = calloc(50, sizeof(char));
+	//line = calloc(BUFFER_SIZE, sizeof(char));
 	//bytes_read = read(0, buffer, BUFFER_SIZE);
-	while (buffer[i] != '\n')
+	while (buffer[i - 1] != '\n')
 	{	
+		i = 0;
 		bytes_read = read(0, buffer, BUFFER_SIZE);
-		buffer_len = strlen(buffer);
-		while(i < buffer_len)
+		while(i < bytes_read && buffer[i] != '\n')
 		{
 			line[j] = buffer[i];
 			i++;
 			j++;
 		}
-		buffer[buffer_len] = '\0';
+		//copio line en aux
 		if (bytes_read < BUFFER_SIZE)
 			break;
-
-		//sentence = memmove(sentence, buffer, strlen(buffer));
-		printf("buffer[i]: %c\n", buffer[i]);
-		printf("buffer: %s\n", buffer);
-		//printf("bucle: %i\n", i);
-		i = 0;
 	}
-	printf("%i\n", i);
-	printf("buffer: %s\n", buffer);
 	printf("line: %s\n", line);
+}
+
+// no se como gestionar la memoria y copiar todo en un string sin causar problemas
+
+char *ft_strjoin(char *s1, char *s2)
+{
+	char *result;
+	int i = 0;
+	int j = 0;
+
+	result = malloc(strlen(s1) + strlen(s2) * sizeof(char));
+	if(!result)
+		return NULL;
+	while(s1[i] != '\0')
+	{
+		result[j] = s1[i];
+		i++;
+		j++;
+	}
+	i = 0;
+	while(s2[i] != '\0')
+	{
+		result[j] = s2[i];
+		i++;
+		j++;
+	}
+	result[j] = '\0';
+	return result;
 }
