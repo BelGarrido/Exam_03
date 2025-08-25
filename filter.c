@@ -21,7 +21,7 @@ void *find_and_replace(char *s, char *filter)
 
 		}
 	}
-
+	return NULL;
 }
 int main(int argc, char *argv[])
 {
@@ -31,24 +31,40 @@ int main(int argc, char *argv[])
 	char *buffer = calloc(BUFFER_SIZE, sizeof(char));
 	char *filter = argv[1];
 	char *line;
-	line = calloc(50, sizeof(char));
-	//line = calloc(BUFFER_SIZE, sizeof(char));
-	//bytes_read = read(0, buffer, BUFFER_SIZE);
-	while (buffer[i - 1] != '\n')
+	int finished = 0;
+	line = calloc(BUFFER_SIZE, sizeof(char));
+	int limit = BUFFER_SIZE;
+	while (!finished)
 	{	
 		i = 0;
 		bytes_read = read(0, buffer, BUFFER_SIZE);
-		while(i < bytes_read && buffer[i] != '\n')
+		if (bytes_read == 0)
+			break;
+		if (bytes_read < BUFFER_SIZE)
+			break;
+		while(i < bytes_read)
 		{
+			if (buffer[i] == '\n')
+			{
+				line[j] = '\0';
+				finished = 1;
+				break;
+			}
+			if (j >= limit)
+			{
+				limit = limit + BUFFER_SIZE;
+				char *tmp = realloc(line, limit);
+				//free(line); ya se hace en realloc
+				line = tmp;
+			}
 			line[j] = buffer[i];
 			i++;
 			j++;
-		}
-		//copio line en aux
-		if (bytes_read < BUFFER_SIZE)
-			break;
+		}		
 	}
+	free (buffer);
 	printf("line: %s\n", line);
+	free(line);
 }
 
 // no se como gestionar la memoria y copiar todo en un string sin causar problemas
