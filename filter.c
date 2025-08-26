@@ -4,7 +4,7 @@
 #include<stdlib.h>
 
 #ifndef BUFFER_SIZE
-#define BUFFER_SIZE 2
+#define BUFFER_SIZE 50
 #endif
 
 int find_and_replace(char *string, char *tofind)
@@ -36,35 +36,41 @@ int find_and_replace(char *string, char *tofind)
 
 char *gnl(char * line)
 {
-	int i = 0;
+	int i;
 	int j = 0;
 	int bytes_read;
-	char *buffer = calloc(BUFFER_SIZE, sizeof(char));
 	int finished = 0;
 	int limit = BUFFER_SIZE;
+	char *buffer = calloc(BUFFER_SIZE, sizeof(char));
 	line = calloc(BUFFER_SIZE, sizeof(char));
 
+	if(!line || ! buffer)
+		return NULL;
 	while (!finished)
 	{	
 		i = 0;
-		bytes_read = read(0, buffer, BUFFER_SIZE);
-		if (bytes_read == 0)
+		bytes_read = read(STDIN_FILENO, buffer, BUFFER_SIZE);
+		if (bytes_read < 0)
+			return NULL;
+		else if (bytes_read == 0)
 			break;
-		if (bytes_read < BUFFER_SIZE)
-			break;
-		while (i < bytes_read)
+/*  		else if (bytes_read < BUFFER_SIZE)
 		{
-			if (buffer[i] == '\n')
+			printf("salto de linea buffer\n");
+			break;
+		}	 */
+		while (i < bytes_read /* || bytes_read < BUFFER_SIZE */)
+		{
+ 			if (buffer[i] == '\n')
 			{
 				line[j] = '\0';
 				finished = 1;
 				break;
 			}
-			if (j >= limit)
+			if (j != limit)
 			{
 				limit = limit + BUFFER_SIZE;
 				char *tmp = realloc(line, limit + 1);
-				//free(line); ya se hace en realloc
 				line = tmp;
 			}
 			line[j] = buffer[i];
@@ -77,13 +83,21 @@ char *gnl(char * line)
 	return line;
 }
 
-
 int main(int argc, char *argv[])
 {
 
+	if (argc != 2)
+	{
+		perror("Error");
+		return 1;
+	}
 	char *filter = argv[1];
 	char *line = gnl(line);
-	
+	if (!line)
+	{
+		perror("Error");
+		return 1;
+	}
 	find_and_replace(line, filter);
 
 	printf("%s", line);
