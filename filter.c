@@ -2,32 +2,32 @@
 #include<unistd.h>
 #include<stdio.h>
 #include<stdlib.h>
-//despues de definir una macro no hay que poner ;
+
 #ifndef BUFFER_SIZE
 #define BUFFER_SIZE 2
 #endif
-
 
 int find_and_replace(char *string, char *tofind)
 {
 	int i = 0;
 	int j = 0;
-	char *filter;
-	filter = "************************************";
+	int len = strlen(tofind);
+
 	if (tofind[j] == '\0')
-		return 0;
+		return 1;
 	while (string[i] != '\0')
 	{
 		j = 0;
-		while (tofind[j] != '\0' && (string[i + j]) == tofind[j])
-		{
+		while (tofind[j] != '\0' && (string[i + j]) != '\0' && (string[i + j]) == tofind[j])	
 			j++;
-			//comprobación de n (?)
-		}
 		if (tofind[j] == '\0')
 		{
-			memmove(string + i, filter, strlen(tofind));
-			//return (i);
+			int k = 0;
+			while(k < len)
+			{
+				string[i + k] = '*';
+				k++;
+			}
 		}
 		i++;
 	}
@@ -39,10 +39,11 @@ char *gnl(char * line)
 	int i = 0;
 	int j = 0;
 	int bytes_read;
-	line = calloc(BUFFER_SIZE, sizeof(char));
 	char *buffer = calloc(BUFFER_SIZE, sizeof(char));
 	int finished = 0;
 	int limit = BUFFER_SIZE;
+	line = calloc(BUFFER_SIZE, sizeof(char));
+
 	while (!finished)
 	{	
 		i = 0;
@@ -62,19 +63,18 @@ char *gnl(char * line)
 			if (j >= limit)
 			{
 				limit = limit + BUFFER_SIZE;
-				char *tmp = realloc(line, limit);
+				char *tmp = realloc(line, limit + 1);
 				//free(line); ya se hace en realloc
 				line = tmp;
 			}
 			line[j] = buffer[i];
 			i++;
 			j++;
-		}		
+		}
 	}
 	free (buffer);
-	printf("line: %s\n", line);
+	line[j] = '\0';
 	return line;
-
 }
 
 
@@ -87,35 +87,7 @@ int main(int argc, char *argv[])
 	find_and_replace(line, filter);
 
 	printf("%s", line);
+	free(line);
 	return 0;
 }
 
-
-
-// no se como gestionar la memoria y copiar todo en un string sin causar problemas
-
-char *ft_strjoin(char *s1, char *s2)
-{
-	char *result;
-	int i = 0;
-	int j = 0;
-
-	result = malloc(strlen(s1) + strlen(s2) * sizeof(char));
-	if(!result)
-		return NULL;
-	while(s1[i] != '\0')
-	{
-		result[j] = s1[i];
-		i++;
-		j++;
-	}
-	i = 0;
-	while(s2[i] != '\0')
-	{
-		result[j] = s2[i];
-		i++;
-		j++;
-	}
-	result[j] = '\0';
-	return result;
-}
