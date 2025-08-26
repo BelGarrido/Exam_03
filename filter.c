@@ -7,32 +7,41 @@
 #define BUFFER_SIZE 2
 #endif
 
-void *find_and_replace(char *s, char *filter)
+
+int find_and_replace(char *string, char *tofind)
 {
 	int i = 0;
 	int j = 0;
-	char *new;
-	new = malloc(strlen(s));
-
-	while(filter[j] != '\0')
+	char *filter;
+	filter = "************************************";
+	if (tofind[j] == '\0')
+		return 0;
+	while (string[i] != '\0')
 	{
-		while(s[i] != '\0')
+		j = 0;
+		while (tofind[j] != '\0' && (string[i + j]) == tofind[j])
 		{
-
+			j++;
+			//comprobación de n (?)
 		}
+		if (tofind[j] == '\0')
+		{
+			memmove(string + i, filter, strlen(tofind));
+			//return (i);
+		}
+		i++;
 	}
-	return NULL;
+	return 0;
 }
-int main(int argc, char *argv[])
+
+char *gnl(char * line)
 {
-	int bytes_read;
 	int i = 0;
 	int j = 0;
-	char *buffer = calloc(BUFFER_SIZE, sizeof(char));
-	char *filter = argv[1];
-	char *line;
-	int finished = 0;
+	int bytes_read;
 	line = calloc(BUFFER_SIZE, sizeof(char));
+	char *buffer = calloc(BUFFER_SIZE, sizeof(char));
+	int finished = 0;
 	int limit = BUFFER_SIZE;
 	while (!finished)
 	{	
@@ -42,7 +51,7 @@ int main(int argc, char *argv[])
 			break;
 		if (bytes_read < BUFFER_SIZE)
 			break;
-		while(i < bytes_read)
+		while (i < bytes_read)
 		{
 			if (buffer[i] == '\n')
 			{
@@ -64,8 +73,24 @@ int main(int argc, char *argv[])
 	}
 	free (buffer);
 	printf("line: %s\n", line);
-	free(line);
+	return line;
+
 }
+
+
+int main(int argc, char *argv[])
+{
+
+	char *filter = argv[1];
+	char *line = gnl(line);
+	
+	find_and_replace(line, filter);
+
+	printf("%s", line);
+	return 0;
+}
+
+
 
 // no se como gestionar la memoria y copiar todo en un string sin causar problemas
 
