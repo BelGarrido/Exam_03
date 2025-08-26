@@ -55,7 +55,7 @@ char *gnl(char * line)
 				line[j] = '\0';
 				return line;
 			}
-			if (j != limit)
+			if (j >= limit)
 			{
 				limit = limit + BUFFER_SIZE;
 				char *tmp = realloc(line, limit + 1);
