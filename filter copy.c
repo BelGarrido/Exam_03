@@ -39,35 +39,31 @@ char *gnl(char * line)
 	int i;
 	int j = 0;
 	int bytes_read;
-	int finished = 0;
 	int limit = BUFFER_SIZE;
-	char *buffer = calloc(BUFFER_SIZE, sizeof(char));
-	line = calloc(BUFFER_SIZE, sizeof(char));
+	char buffer[BUFFER_SIZE];
+	line = malloc(BUFFER_SIZE);
 
-	if(!line || ! buffer)
+	if(!line)
 		return NULL;
-	while (!finished)
+	while ((bytes_read = read(STDIN_FILENO, buffer, BUFFER_SIZE)) > 0)
 	{	
 		i = 0;
-		bytes_read = read(STDIN_FILENO, buffer, BUFFER_SIZE);
-		if (bytes_read < 0)
-			return NULL;
-		else if (bytes_read == 0)
-			break;
 		while (i < bytes_read)
 		{
  			if (buffer[i] == '\n')
 			{
 				line[j] = '\0';
-				finished = 1;
-				break;
+				return line;
 			}
 			if (j != limit)
 			{
 				limit = limit + BUFFER_SIZE;
 				char *tmp = realloc(line, limit + 1);
 				if (!tmp)
+				{
+					free(line);
 					return NULL;
+				}
 				line = tmp;
 			}
 			line[j] = buffer[i];
@@ -75,7 +71,6 @@ char *gnl(char * line)
 			j++;
 		}
 	}
-	free (buffer);
 	line[j] = '\0';
 	return line;
 }
