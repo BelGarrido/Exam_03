@@ -96,7 +96,6 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 	find_and_replace(line, filter);
-
 	printf("%s", line);
 	free(line);
 	return 0;
