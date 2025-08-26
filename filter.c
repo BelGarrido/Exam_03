@@ -41,10 +41,10 @@ char *gnl(char * line)
 	int bytes_read;
 	int finished = 0;
 	int limit = BUFFER_SIZE;
-	char *buffer = calloc(BUFFER_SIZE, sizeof(char));
-	line = calloc(BUFFER_SIZE, sizeof(char));
+	char buffer[BUFFER_SIZE];
+	line = malloc(BUFFER_SIZE);
 
-	if(!line || ! buffer)
+	if(!line)
 		return NULL;
 	while (!finished)
 	{	
@@ -75,18 +75,17 @@ char *gnl(char * line)
 			j++;
 		}
 	}
-	free (buffer);
+	//free (buffer);
 	line[j] = '\0';
 	return line;
 }
 
 int main(int argc, char *argv[])
 {
-
 	if (argc != 2)
 	{
 		perror("Error");
-		return 1;
+		return 2;
 	}
 	char *filter = argv[1];
 	char *line = gnl(line);
