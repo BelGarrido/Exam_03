@@ -62,7 +62,7 @@ char *gnl(char * line)
 				finished = 1;
 				break;
 			}
-			if (j != limit)
+			if (j >= limit)
 			{
 				limit = limit + BUFFER_SIZE;
 				char *tmp = realloc(line, limit + 1);
