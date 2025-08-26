@@ -7,42 +7,40 @@
 #define BUFFER_SIZE 2
 #endif
 
-char* create_filter(char* str){
-	char* filter;
-	int tofind_len = strlen(str);
+char* create_filter(int filter_size){
+	//char* filter = *f;
+	char *ast;
 	int z = 0;
-	filter = malloc (tofind_len*sizeof(char));
-	while(z<tofind_len){
-		filter[z]='*';
+	ast = calloc(filter_size, sizeof(char)+1);
+	while(z<filter_size){
+		ast[z]='*';
 		z++;
 	}
-	return filter;
+	ast[z] = '\0';
+	return ast;
 }
 int find_and_replace(char *string, char *tofind)
 {
 	int i = 0;
 	int j = 0;
-	char *filter;
-	//filter = "************************************";
+	char *ast;
 	if (tofind[j] == '\0')
 		return 0;
 	while (string[i] != '\0')
 	{
 		j = 0;
-		while (tofind[j] != '\0' && (string[i + j]) == tofind[j])
+		while (tofind[j] != '\0' && (string[i + j]) != '\0' && (string[i + j]) == tofind[j])
 		{
 			j++;
-			//comprobación de n (?)
 		}
 		if (tofind[j] == '\0')
 		{
-			filter = create_filter(tofind);
-			memmove(string + i, filter, strlen(filter));
-			//return (i);
+			ast = create_filter(strlen(tofind));
+			memmove(string + i, ast, strlen(ast));
+			free(ast);
 		}
 		i++;
 	}
-	free(filter);
 	return 0;
 }
 
@@ -53,41 +51,29 @@ char *gnl(char * line)
 	int bytes_read;
 	line = calloc(BUFFER_SIZE, sizeof(char));
 	char buffer[BUFFER_SIZE];
-	int finished = 0;
 	int limit = BUFFER_SIZE;
-	while (!finished)
+	while ((bytes_read = read(0, buffer, BUFFER_SIZE))>0)
 	{	
 		i = 0;
-		bytes_read = read(0, buffer, BUFFER_SIZE);
-		if (bytes_read == 0)
-			break;
-		if (bytes_read < BUFFER_SIZE)
-			break;
 		while (i < bytes_read)
 		{
 			if (buffer[i] == '\n')
 			{
 				line[j] = '\0';
-				finished = 1;
-				break;
+				return line;
 			}
 			if (j >= limit)
 			{
 				limit = limit + BUFFER_SIZE;
-				char *tmp = realloc(line, limit+1);
-				//free(line); ya se hace en realloc
-				line = tmp;
+				line = realloc(line, limit+1);
 			}
 			line[j] = buffer[i];
 			i++;
 			j++;
-		}		
-	}
-	line[j]='\0';
-	//free (buffer);
-	//printf("line: %s\n", line);
-	return line;
+		}
 
+	}
+	return (NULL);
 }
 
 
@@ -97,38 +83,11 @@ int main(int argc, char *argv[])
 	char *filter = argv[1];
 	char *line = gnl(line);
 	
+	//char* ast = create_filter(strlen(filter));
 	find_and_replace(line, filter);
 
 	printf("%s", line);
+	free(line);
+	//free(ast);
 	return 0;
-}
-
-
-
-// no se como gestionar la memoria y copiar todo en un string sin causar problemas
-
-char *ft_strjoin(char *s1, char *s2)
-{
-	char *result;
-	int i = 0;
-	int j = 0;
-
-	result = malloc(strlen(s1) + strlen(s2) * sizeof(char));
-	if(!result)
-		return NULL;
-	while(s1[i] != '\0')
-	{
-		result[j] = s1[i];
-		i++;
-		j++;
-	}
-	i = 0;
-	while(s2[i] != '\0')
-	{
-		result[j] = s2[i];
-		i++;
-		j++;
-	}
-	result[j] = '\0';
-	return result;
 }
