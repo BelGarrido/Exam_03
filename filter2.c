@@ -21,6 +21,7 @@ char* create_filter(int filter_size)
 	ast[z] = '\0';
 	return ast;
 }
+
 void find_and_replace(char *string, char *tofind)
 {
 	int i = 0;
