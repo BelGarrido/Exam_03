@@ -75,7 +75,6 @@ char *gnl(char * line)
 			j++;
 		}
 	}
-	//free (buffer);
 	line[j] = '\0';
 	return line;
 }
