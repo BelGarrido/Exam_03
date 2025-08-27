@@ -7,7 +7,8 @@
 #define BUFFER_SIZE 2
 #endif
 
-char* create_filter(int filter_size){
+char* create_filter(int filter_size)
+{
 	char *ast;
 	int z = 0;
 
@@ -79,9 +80,19 @@ char *gnl(char * line)
 
 int main(int argc, char *argv[])
 {
+	if (argc != 2)
+	{
+		fprintf(stderr, "Uso: %s <palabra_a_filtrar>\n", argv[0]);
+		return 2;
+	}
 	char *filter = argv[1];
 	char *line = gnl(line);
 	
+	if (!line)
+	{
+		fprintf(stderr, "Error: no se pudo leer ninguna línea\n");
+		return 1;
+	}
 	find_and_replace(line, filter);
 	printf("%s", line);
 	free(line);
