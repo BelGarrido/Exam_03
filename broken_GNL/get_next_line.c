@@ -125,12 +125,16 @@ char *get_next_line(int fd)
 			return NULL;
 		printf("RET_POST: %s\n", ret);
 		int read_ret = read(fd, b, BUFFER_SIZE);
+		if (b[0] == 0)
+			break;
 		printf("--------------Lectura: %i\n", read_ret);		
 		if(read_ret == -1)
 			return NULL;
-		else if(read_ret == 0)
-			return ret; 
 		b[read_ret] = 0;
+		if(read_ret == 0)
+		{
+			return ret;
+		} 
 	}
 	printf("control\n");
 	if(!str_append_mem(&ret, b, tmp - b + 1))
