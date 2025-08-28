@@ -128,8 +128,8 @@ char *get_next_line(int fd)
 		printf("--------------Lectura: %i\n", read_ret);		
 		if(read_ret == -1)
 			return NULL;
- 		else if(read_ret == 0)
-			return NULL;
+		else if(read_ret == 0)
+			return ret; 
 		b[read_ret] = 0;
 	}
 	printf("control\n");
