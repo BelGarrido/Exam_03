@@ -1,0 +1,21 @@
+ATAJOS
+
+yy -> copy line
+dd -> delete line
+p -> paste
+x -> remove char
+i -> insert before cursor
+a -> append after cursor
+o -> insert carriage jump and insert text
+u -> undo
+$ -> go to end line
+0 -> go to start line
+gg-> go to start file
+
+Ctrl+r -> redo
+Ctrl+n/Ctrl+p -> suggest words
+
+COMANDOS
+:set nu -> show line number
+:syntax on -> highlight the syntax
+/TEXT -> search TEXT || n go to next ocurrence || N go to prev ocurrence
