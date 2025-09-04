@@ -4,7 +4,7 @@
 #include<stdlib.h>
 //despues de definir una macro no hay que poner ;
 #ifndef BUFFER_SIZE
-#define BUFFER_SIZE 2
+#define BUFFER_SIZE 4
 #endif
 
 char* create_filter(int filter_size)
@@ -26,7 +26,7 @@ void find_and_replace(char *string, char *tofind)
 {
 	int i = 0;
 	int j = 0;
-	char *ast;
+	char *ast = NULL;
 
 	if (tofind[j] == '\0')
 		return ;
@@ -38,6 +38,10 @@ void find_and_replace(char *string, char *tofind)
 		if (tofind[j] == '\0')
 		{
 			ast = create_filter(strlen(tofind));
+			if(!ast){
+				free(ast);
+				return ;
+			}
 			memmove(string + i, ast, strlen(ast));
 			free(ast);
 		}
@@ -46,7 +50,7 @@ void find_and_replace(char *string, char *tofind)
 	return ;
 }
 
-char *gnl(char *line)
+char *gnl(char * line)
 {
 	int i = 0;
 	int j = 0;
@@ -54,47 +58,32 @@ char *gnl(char *line)
 	char buffer[BUFFER_SIZE];
 	int limit = BUFFER_SIZE;
 
-	line = calloc(BUFFER_SIZE, sizeof(char));
-	//comprobación de seguridad
-	while ((bytes_read = read(STDIN_FILENO, buffer, BUFFER_SIZE)) > 0)
+	line = calloc(BUFFER_SIZE+1, sizeof(char));
+
+	while (bytes_read = read(STDIN_FILENO, buffer, BUFFER_SIZE))
 	{	
 		i = 0;
-		printf("bucle de bytes > 0 ---> %i\n", bytes_read);
 		while (i < bytes_read)
 		{
-			printf("bucle de bytes i < bytes read\n");
+			if (buffer[i] == '\n')
+			{
+				line[j] = '\0';
+				return line;
+			}
 			if (j >= limit)
 			{
-				printf("bucle de j > limits: realloc\n");
-				limit = limit + BUFFER_SIZE;
+				limit = limit + bytes_read;
 				line = realloc(line, limit + 1);
-				//comprobación de seguridad
 			}
 			line[j] = buffer[i];
 			i++;
 			j++;
 		}
-		printf("salida\n");
 	}
-/* 	while(buffer[i] != '\0')
-	{
-		line[j] = buffer[i];
-		i++;
-		j++;
-	} */
-	if (bytes_read == 0)
-	{
-		printf("bucle de bytes < 0\n");
-		if (line && line[0] != '\0')
-		{
-			buffer[0] = '\0';
-			return line;
-		}
-		free(line);
-		return NULL;
-	}
+	free(line);
 	return NULL;
 }
+
 
 int main(int argc, char *argv[])
 {
@@ -109,16 +98,16 @@ int main(int argc, char *argv[])
 	while(1)
 	{
 		line = gnl(line);
-		find_and_replace(line, filter);
-		write(1, line, strlen(line));
-		write(1, "\n", 1);
-		//printf("%s", line);
-		free(line);
 		if (!line)
 		{
 			fprintf(stderr, "Error: no se pudo leer ninguna línea\n");
 			return 1;
-		}	
+		}
+		find_and_replace(line, filter);
+		write(1, line, strlen(line));
+		write(1, "\n", 1);
+		//printf("%s", line);	
+		free(line);
 	}
 	return 0;
 }
