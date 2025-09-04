@@ -105,17 +105,20 @@ int main(int argc, char *argv[])
 	}
 	char *filter = argv[1];
 	char *line;
-	
-	while (line = gnl(line))
+
+	while(1)
 	{
+		line = gnl(line);
 		find_and_replace(line, filter);
-		printf("%s", line);
+		write(1, line, strlen(line));
+		write(1, "\n", 1);
+		//printf("%s", line);
 		free(line);
-	}
-	if (!line)
-	{
-		fprintf(stderr, "Error: no se pudo leer ninguna línea\n");
-		return 1;
+		if (!line)
+		{
+			fprintf(stderr, "Error: no se pudo leer ninguna línea\n");
+			return 1;
+		}	
 	}
 	return 0;
 }
