@@ -46,7 +46,7 @@ void find_and_replace(char *string, char *tofind)
 	return ;
 }
 
-char *gnl(char * line)
+char *gnl(char *line)
 {
 	int i = 0;
 	int j = 0;
@@ -55,26 +55,43 @@ char *gnl(char * line)
 	int limit = BUFFER_SIZE;
 
 	line = calloc(BUFFER_SIZE, sizeof(char));
-
+	//comprobación de seguridad
 	while ((bytes_read = read(STDIN_FILENO, buffer, BUFFER_SIZE)) > 0)
 	{	
 		i = 0;
+		printf("bucle de bytes > 0 ---> %i\n", bytes_read);
 		while (i < bytes_read)
 		{
-			if (buffer[i] == '\n')
-			{
-				line[j] = '\0';
-				return line;
-			}
+			printf("bucle de bytes i < bytes read\n");
 			if (j >= limit)
 			{
+				printf("bucle de j > limits: realloc\n");
 				limit = limit + BUFFER_SIZE;
 				line = realloc(line, limit + 1);
+				//comprobación de seguridad
 			}
 			line[j] = buffer[i];
 			i++;
 			j++;
 		}
+		printf("salida\n");
+	}
+/* 	while(buffer[i] != '\0')
+	{
+		line[j] = buffer[i];
+		i++;
+		j++;
+	} */
+	if (bytes_read == 0)
+	{
+		printf("bucle de bytes < 0\n");
+		if (line && line[0] != '\0')
+		{
+			buffer[0] = '\0';
+			return line;
+		}
+		free(line);
+		return NULL;
 	}
 	return NULL;
 }
@@ -87,16 +104,19 @@ int main(int argc, char *argv[])
 		return 2;
 	}
 	char *filter = argv[1];
-	char *line = gnl(line);
+	char *line;
 	
+	while (line = gnl(line))
+	{
+		find_and_replace(line, filter);
+		printf("%s", line);
+		free(line);
+	}
 	if (!line)
 	{
 		fprintf(stderr, "Error: no se pudo leer ninguna línea\n");
 		return 1;
 	}
-	find_and_replace(line, filter);
-	printf("%s", line);
-	free(line);
 	return 0;
 }
 
