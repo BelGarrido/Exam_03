@@ -86,16 +86,22 @@ int main(int argc, char *argv[])
 		return 2;
 	}
 	char *filter = argv[1];
-	char *line = gnl(line);
-	
-	if (!line)
+	char *line;
+
+	while(1)
 	{
-		fprintf(stderr, "Error: no se pudo leer ninguna línea\n");
-		return 1;
+		line = gnl(line);
+		find_and_replace(line, filter);
+		write(1, line, strlen(line));
+		write(1, "\n", 1);
+		//printf("%s", line);
+		free(line);
+		if (!line)
+		{
+			fprintf(stderr, "Error: no se pudo leer ninguna línea\n");
+			return 1;
+		}	
 	}
-	find_and_replace(line, filter);
-	printf("%s", line);
-	free(line);
 	return 0;
 }
 
